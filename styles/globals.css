@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  /* border: 1px solid gold; */
+  height: 100vh;
+}
+
+canvas {
+  /* border: 2px solid red; */
+  position: "relative";
+}
