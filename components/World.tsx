@@ -137,7 +137,7 @@ export const World = (props: Props) => {
         const basePeerMeshY = 0.5 * (index + 1);
 
         const peerMeshX = isToLeft ? -basePeerMeshX * 2 : basePeerMeshX * 2;
-        const peerMeshY = isToTop ? -basePeerMeshY : basePeerMeshY;
+        const peerMeshY = isToTop ? -basePeerMeshY * 1.5 : basePeerMeshY * 1.5;
 
         const peerNodeRef = peerNodeRefs.current[index];
 
