@@ -1,6 +1,10 @@
 import { useMemo, RefObject, forwardRef } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { useFrame, useLoader } from "@react-three/fiber";
+import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler";
+import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { getRandom } from "./utils";
 
 type Props = {
   count: number;
@@ -8,17 +12,69 @@ type Props = {
   color?: string;
   isOverlapping: boolean;
   position?: [number, number, number];
+  isPeerNode?: boolean;
 };
 
-type MeshRef = {
-  mesh: THREE.Mesh;
-};
+const modelPath = getRandom([
+  "/models/love/love.gltf",
+  "/models/dragon/red_dragon.glb",
+  "/models/eva/scene.gltf",
+]);
 
 const BaseComponent = (props: Props, ref: RefObject<THREE.Points>) => {
-  const { count, shape, color, isOverlapping, position } = props;
+  const { count, shape, color, isOverlapping, position, isPeerNode } = props;
 
-  // Generate our positions attributes array
-  const particlesPosition = useMemo(() => {
+  const gltf = useLoader(GLTFLoader, modelPath);
+
+  const modelVertices = useMemo(() => {
+    // The gltf object contains a number of nodes, some of which are meshes
+    // We want to filter for the meshes and get their geometries
+    // so we can merge them into one geometry, which we can then sample
+    const nodes = Object.values(gltf.nodes);
+    const geometries = nodes.reduce<THREE.BufferGeometry[]>(
+      (accumulator, currentValue) => {
+        const isEmptyObject = !!currentValue;
+        if (!isEmptyObject) return accumulator;
+
+        // @ts-ignore
+        const isNonMeshObject = !currentValue.isMesh;
+        if (isNonMeshObject) return accumulator;
+
+        // @ts-ignore
+        return [...accumulator, currentValue.geometry];
+      },
+      []
+    );
+
+    if (geometries.length === 0) {
+      console.log("DEBUG: No geometries found in model");
+      return [];
+    }
+
+    const mergedGeometries = BufferGeometryUtils.mergeGeometries(geometries);
+    const mergedMesh = new THREE.Mesh(
+      mergedGeometries,
+      new THREE.MeshBasicMaterial({
+        wireframe: true,
+        color: new THREE.Color("red"),
+      })
+    );
+
+    const sampler = new MeshSurfaceSampler(mergedMesh).build();
+    const sampleCount = 4000;
+    const sampleVector = new THREE.Vector3();
+    const vertices = new Float32Array(sampleCount * 3);
+
+    for (let i = 0; i < sampleCount; i++) {
+      sampler.sample(sampleVector);
+      vertices.set([sampleVector.x, sampleVector.y, sampleVector.z], i * 3);
+    }
+
+    return vertices;
+  }, [gltf]);
+
+  // Generate vertices for a shape (box or sphere)
+  const shapeVertices = useMemo(() => {
     const positions = new Float32Array(count * 3);
 
     if (shape === "box") {
@@ -75,8 +131,8 @@ const BaseComponent = (props: Props, ref: RefObject<THREE.Points>) => {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={particlesPosition.length / 3}
-          array={particlesPosition}
+          count={modelVertices.length / 3}
+          array={modelVertices as THREE.TypedArray}
           itemSize={3}
         />
       </bufferGeometry>
