@@ -113,3 +113,9 @@ const initialColorRange = ["#FA7070", "#A6CF98"];
 export const color = generatePastelColor();
 
 export const shape = getRandom(["box", "sphere"]);
+
+export const modelPath = getRandom([
+  "/models/love/love.gltf",
+  "/models/dragon/red_dragon.glb",
+  "/models/eva/scene.gltf",
+]);

@@ -9,6 +9,7 @@ export type NodeDetails = {
   physicalPositionY: number;
   timestamp: number;
   shape: string;
+  modelPath: string;
 };
 
 export type NodeGroup = {

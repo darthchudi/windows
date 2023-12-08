@@ -126,7 +126,7 @@ export const World = (props: Props) => {
         count={1000}
         shape={shape}
         color={color}
-        isOverlapping={numOverlappingNodes > 0}
+        isOverlapping={overlappingNodes.length > 0}
       />
 
       {overlappingNodes.map((peerNode, index) => {
@@ -150,6 +150,8 @@ export const World = (props: Props) => {
             color={peerNode.color}
             position={[peerMeshX, 0, -0.5]}
             isOverlapping
+            isPeerNode
+            modelPath={peerNode.modelPath}
           />
         );
       })}

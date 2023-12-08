@@ -10,6 +10,7 @@ import {
   color,
   shape,
   DB_KEY,
+  modelPath,
   NODE_LAST_SEEN_THRESHOLD,
 } from "@/components/utils";
 import { NodeGroup } from "./types";
@@ -61,6 +62,7 @@ export default function App() {
       meshPhysicalPositionY: meshY,
       timestamp: Date.now(),
       shape,
+      modelPath,
     };
 
     const serialisedData = JSON.stringify(windowDetails);
@@ -125,6 +127,7 @@ export default function App() {
       meshPhysicalPositionX: meshX,
       meshPhysicalPositionY: meshY,
       timestamp: Date.now(),
+      modelPath,
     };
 
     const serialisedData = JSON.stringify(windowDetails);

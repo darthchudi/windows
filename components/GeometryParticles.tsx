@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { getRandom } from "./utils";
+import { modelPath } from "./utils";
 
 type Props = {
   count: number;
@@ -13,18 +13,21 @@ type Props = {
   isOverlapping: boolean;
   position?: [number, number, number];
   isPeerNode?: boolean;
+  modelPath?: string;
 };
 
-const modelPath = getRandom([
-  "/models/love/love.gltf",
-  "/models/dragon/red_dragon.glb",
-  "/models/eva/scene.gltf",
-]);
-
 const BaseComponent = (props: Props, ref: RefObject<THREE.Points>) => {
-  const { count, shape, color, isOverlapping, position, isPeerNode } = props;
+  const {
+    count,
+    shape,
+    color,
+    isOverlapping,
+    position,
+    isPeerNode,
+    modelPath: modelPathProp,
+  } = props;
 
-  const gltf = useLoader(GLTFLoader, modelPath);
+  const gltf = useLoader(GLTFLoader, modelPathProp || modelPath);
 
   const modelVertices = useMemo(() => {
     // The gltf object contains a number of nodes, some of which are meshes
