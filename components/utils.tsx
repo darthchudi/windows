@@ -19,7 +19,7 @@ export function doRectanglesHaveOverlap(
   );
 }
 
-export const getRandom = (list: string[]) => {
+export const getRandom = (list: any[]) => {
   const randomElement = list[Math.floor(Math.random() * list.length)];
   return randomElement;
 };
@@ -114,8 +114,17 @@ export const color = generatePastelColor();
 
 export const shape = getRandom(["box", "sphere"]);
 
-export const modelPath = getRandom([
-  "/models/love/love.gltf",
-  "/models/dragon/red_dragon.glb",
-  "/models/eva/scene.gltf",
-]);
+const MODELS = [
+  {
+    path: "/models/dragon/red_dragon.glb",
+    id: "dragon",
+    color: "#ad3627",
+  },
+  {
+    path: "/models/dolphin/scene.gltf",
+    id: "dolphin",
+    color: "#90accb",
+  },
+];
+
+export const worldModelDetails = getRandom(MODELS);

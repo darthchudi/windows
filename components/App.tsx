@@ -7,10 +7,9 @@ import { useInterval } from "@/hooks";
 import {
   DB_PREFIX,
   id,
-  color,
   shape,
   DB_KEY,
-  modelPath,
+  worldModelDetails,
   NODE_LAST_SEEN_THRESHOLD,
 } from "@/components/utils";
 import { NodeGroup } from "./types";
@@ -57,12 +56,12 @@ export default function App() {
       windowHeight,
       windowX: x,
       windowY: y,
-      color,
+      color: worldModelDetails.color,
       meshPhysicalPositionX: meshX,
       meshPhysicalPositionY: meshY,
       timestamp: Date.now(),
       shape,
-      modelPath,
+      modelPath: worldModelDetails.path,
     };
 
     const serialisedData = JSON.stringify(windowDetails);
@@ -122,12 +121,12 @@ export default function App() {
       windowHeight,
       windowX: x,
       windowY: y,
-      color,
+      color: worldModelDetails.color,
       shape,
       meshPhysicalPositionX: meshX,
       meshPhysicalPositionY: meshY,
       timestamp: Date.now(),
-      modelPath,
+      modelPath: worldModelDetails.path,
     };
 
     const serialisedData = JSON.stringify(windowDetails);
@@ -142,7 +141,7 @@ export default function App() {
         }
         camera={{ position: [1.5, 1.5, 1.5] }}
       >
-        <OrbitControls autoRotate={false} />
+        <OrbitControls autoRotate={true} />
 
         <World
           windowX={x}

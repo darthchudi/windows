@@ -4,12 +4,11 @@ import { useInterval } from "@/hooks";
 import {
   doRectanglesHaveOverlap,
   NODE_LAST_SEEN_THRESHOLD,
-  color,
-  shape,
+  worldModelDetails,
   convertFromWorldSpaceToPixelSpace,
 } from "@/components/utils";
 import * as THREE from "three";
-import { GeometryParticles } from "./GeometryParticles";
+import { ParticleModel } from "./ParticleModel";
 import { NodeGroup } from "./types";
 
 type Props = {
@@ -55,7 +54,7 @@ export const World = (props: Props) => {
     // as it could be from a closed node window
     const lastSeen = Date.now() - node.timestamp;
     if (lastSeen > NODE_LAST_SEEN_THRESHOLD) {
-      return null;
+      return false;
     }
 
     const peerRectangle = {
@@ -97,7 +96,7 @@ export const World = (props: Props) => {
     );
 
     // The mesh's physical position on the screen is relative to the canvas,
-    // so we need to add the window's position to get the physical position
+    // so we need to add the window's position as an offset
     meshPhysicalPosition.x = windowX + meshPixelPositionInCanvas.x;
     meshPhysicalPosition.y = windowY + meshPixelPositionInCanvas.y;
   }
@@ -113,7 +112,7 @@ export const World = (props: Props) => {
   useEffect(() => {
     if (!gl) return;
 
-    gl.setClearColor(new THREE.Color("black"));
+    gl.setClearColor(new THREE.Color("white"));
   }, [gl]);
 
   return (
@@ -121,12 +120,12 @@ export const World = (props: Props) => {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
 
-      <GeometryParticles
+      <ParticleModel
         ref={ref}
         count={1000}
-        shape={shape}
-        color={color}
         isOverlapping={overlappingNodes.length > 0}
+        modelPath={worldModelDetails.path}
+        color={worldModelDetails.color}
       />
 
       {overlappingNodes.map((peerNode, index) => {
@@ -142,16 +141,16 @@ export const World = (props: Props) => {
         const peerNodeRef = peerNodeRefs.current[index];
 
         return (
-          <GeometryParticles
+          <ParticleModel
             ref={peerNodeRef}
             key={index}
             count={1000}
             shape={peerNode.shape}
             color={peerNode.color}
+            modelPath={peerNode.modelPath}
             position={[peerMeshX, 0, -0.5]}
             isOverlapping
             isPeerNode
-            modelPath={peerNode.modelPath}
           />
         );
       })}
