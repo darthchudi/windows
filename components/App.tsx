@@ -7,10 +7,9 @@ import { useInterval } from "@/hooks";
 import {
   DB_PREFIX,
   id,
-  color,
   shape,
   DB_KEY,
-  modelPath,
+  worldModelDetails,
   NODE_LAST_SEEN_THRESHOLD,
 } from "@/components/utils";
 import { NodeGroup } from "./types";
@@ -44,7 +43,31 @@ export default function App() {
     if (windowHeight != window.innerHeight) {
       setWindowHeight(window.innerHeight);
     }
-  }, 1);
+  }, 250);
+
+  /**
+   * Update local storage state for this node every 3 seconds
+   * Solves the problem of the node not being removed from
+   * the state when the window is closed
+   */
+  useInterval(() => {
+    const windowDetails = {
+      id,
+      windowWidth,
+      windowHeight,
+      windowX: x,
+      windowY: y,
+      color: worldModelDetails.color,
+      shape,
+      meshPhysicalPositionX: meshX,
+      meshPhysicalPositionY: meshY,
+      timestamp: Date.now(),
+      modelPath: worldModelDetails.path,
+    };
+
+    const serialisedData = JSON.stringify(windowDetails);
+    localStorage.setItem(DB_KEY, serialisedData);
+  }, NODE_LAST_SEEN_THRESHOLD);
 
   /**
    * Updates local storage when the window/mesh position or size changes.
@@ -57,12 +80,12 @@ export default function App() {
       windowHeight,
       windowX: x,
       windowY: y,
-      color,
+      color: worldModelDetails.color,
       meshPhysicalPositionX: meshX,
       meshPhysicalPositionY: meshY,
       timestamp: Date.now(),
       shape,
-      modelPath,
+      modelPath: worldModelDetails.path,
     };
 
     const serialisedData = JSON.stringify(windowDetails);
@@ -110,30 +133,6 @@ export default function App() {
     };
   }, []);
 
-  /**
-   * Update local storage state for this node every 3 seconds
-   * Solves the problem of the node not being removed from
-   * the state when the window is closed
-   */
-  useInterval(() => {
-    const windowDetails = {
-      id,
-      windowWidth,
-      windowHeight,
-      windowX: x,
-      windowY: y,
-      color,
-      shape,
-      meshPhysicalPositionX: meshX,
-      meshPhysicalPositionY: meshY,
-      timestamp: Date.now(),
-      modelPath,
-    };
-
-    const serialisedData = JSON.stringify(windowDetails);
-    localStorage.setItem(DB_KEY, serialisedData);
-  }, NODE_LAST_SEEN_THRESHOLD);
-
   return (
     <div className="App">
       <Canvas
@@ -142,7 +141,7 @@ export default function App() {
         }
         camera={{ position: [1.5, 1.5, 1.5] }}
       >
-        <OrbitControls autoRotate={false} />
+        <OrbitControls autoRotate={true} />
 
         <World
           windowX={x}
