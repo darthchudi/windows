@@ -136,9 +136,14 @@ export default function App() {
   return (
     <div className="App">
       <Canvas
-        gl={(canvas) =>
-          new THREE.WebGLRenderer({ canvas, logarithmicDepthBuffer: true })
-        }
+        gl={(canvas) => {
+          const renderer = new THREE.WebGLRenderer({
+            canvas,
+            logarithmicDepthBuffer: true,
+          });
+          renderer.setClearColor(new THREE.Color("white"));
+          return renderer;
+        }}
         camera={{ position: [1.5, 1.5, -30] }}
       >
         <OrbitControls autoRotate={true} />

@@ -115,12 +115,6 @@ export const World = (props: Props) => {
     setMeshY(meshPhysicalPosition.y);
   }, [meshPhysicalPosition.x, meshPhysicalPosition.y, setMeshX, setMeshY]);
 
-  useEffect(() => {
-    if (!gl) return;
-
-    gl.setClearColor(new THREE.Color("white"));
-  }, [gl]);
-
   return (
     <>
       <ambientLight intensity={0.5} />
