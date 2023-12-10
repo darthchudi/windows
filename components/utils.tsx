@@ -114,7 +114,7 @@ export const color = generatePastelColor();
 
 export const shape = getRandom(["box", "sphere"]);
 
-const MODELS = [
+export const MODELS = [
   {
     path: "/models/dragon/red_dragon.glb",
     id: "dragon",

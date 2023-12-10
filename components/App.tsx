@@ -43,7 +43,31 @@ export default function App() {
     if (windowHeight != window.innerHeight) {
       setWindowHeight(window.innerHeight);
     }
-  }, 1);
+  }, 250);
+
+  /**
+   * Update local storage state for this node every 3 seconds
+   * Solves the problem of the node not being removed from
+   * the state when the window is closed
+   */
+  useInterval(() => {
+    const windowDetails = {
+      id,
+      windowWidth,
+      windowHeight,
+      windowX: x,
+      windowY: y,
+      color: worldModelDetails.color,
+      shape,
+      meshPhysicalPositionX: meshX,
+      meshPhysicalPositionY: meshY,
+      timestamp: Date.now(),
+      modelPath: worldModelDetails.path,
+    };
+
+    const serialisedData = JSON.stringify(windowDetails);
+    localStorage.setItem(DB_KEY, serialisedData);
+  }, NODE_LAST_SEEN_THRESHOLD);
 
   /**
    * Updates local storage when the window/mesh position or size changes.
@@ -108,30 +132,6 @@ export default function App() {
       localStorage.removeItem(DB_KEY);
     };
   }, []);
-
-  /**
-   * Update local storage state for this node every 3 seconds
-   * Solves the problem of the node not being removed from
-   * the state when the window is closed
-   */
-  useInterval(() => {
-    const windowDetails = {
-      id,
-      windowWidth,
-      windowHeight,
-      windowX: x,
-      windowY: y,
-      color: worldModelDetails.color,
-      shape,
-      meshPhysicalPositionX: meshX,
-      meshPhysicalPositionY: meshY,
-      timestamp: Date.now(),
-      modelPath: worldModelDetails.path,
-    };
-
-    const serialisedData = JSON.stringify(windowDetails);
-    localStorage.setItem(DB_KEY, serialisedData);
-  }, NODE_LAST_SEEN_THRESHOLD);
 
   return (
     <div className="App">
