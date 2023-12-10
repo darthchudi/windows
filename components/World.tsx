@@ -1,15 +1,17 @@
 import { useEffect, useRef, createRef, RefObject } from "react";
-import { useThree } from "@react-three/fiber";
+import { useLoader, useThree } from "@react-three/fiber";
 import { useInterval } from "@/hooks";
 import {
   doRectanglesHaveOverlap,
   NODE_LAST_SEEN_THRESHOLD,
   worldModelDetails,
   convertFromWorldSpaceToPixelSpace,
+  MODELS,
 } from "@/components/utils";
 import * as THREE from "three";
 import { ParticleModel } from "./ParticleModel";
 import { NodeGroup } from "./types";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 type Props = {
   windowX: number;
@@ -39,6 +41,10 @@ export const World = (props: Props) => {
   const ref = useRef<THREE.Points>(null);
   const peerNodeRefs = useRef<RefObject<THREE.Points>[]>([]);
   const nodes = Object.values(nodeGroup);
+
+  // Preload the models
+  useLoader(GLTFLoader, MODELS[0].path);
+  useLoader(GLTFLoader, MODELS[1].path);
 
   const windowRectangle = {
     left: windowX,
