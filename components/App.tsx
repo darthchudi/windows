@@ -139,7 +139,7 @@ export default function App() {
         gl={(canvas) =>
           new THREE.WebGLRenderer({ canvas, logarithmicDepthBuffer: true })
         }
-        camera={{ position: [1.5, 1.5, 1.5] }}
+        camera={{ position: [1.5, 1.5, -30] }}
       >
         <OrbitControls autoRotate={true} />
 
